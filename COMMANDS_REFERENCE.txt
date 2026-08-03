@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+
+###############################################################################
+# OHLCV Project - Master Commands Reference
+# 
+# This file documents all available master commands for running the project.
+# Use this as a quick reference guide.
+###############################################################################
+
+cat << 'EOF'
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    OHLCV MASTER COMMANDS REFERENCE                        ║
+║         Data Validation & Monitoring System - Complete Workflow            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+  🚀 QUICK START (RECOMMENDED)
+═══════════════════════════════════════════════════════════════════════════════
+
+  ./run.sh full              Run everything in one command
+  make full                  Alternative using Make
+
+  This will:
+  ✓ Create virtual environment
+  ✓ Install dependencies
+  ✓ Run data pipeline (fetch, validate, clean, detect outliers)
+  ✓ Launch interactive dashboard
+
+═══════════════════════════════════════════════════════════════════════════════
+  📋 SHELL SCRIPT COMMANDS (./run.sh)
+═══════════════════════════════════════════════════════════════════════════════
+
+  MASTER WORKFLOW:
+  ───────────────────────────────────────────────────────────────────────────
+  ./run.sh full              Complete workflow (setup + run + dashboard)
+  ./run.sh setup             Setup environment and install dependencies
+  ./run.sh run               Run data pipeline
+  ./run.sh dashboard         Launch Streamlit dashboard
+  
+  UTILITIES:
+  ───────────────────────────────────────────────────────────────────────────
+  ./run.sh test              Test installation
+  ./run.sh clean             Clean cache and temporary files
+  ./run.sh help              Show help message
+
+═══════════════════════════════════════════════════════════════════════════════
+  🔨 MAKE COMMANDS (make)
+═══════════════════════════════════════════════════════════════════════════════
+
+  MASTER WORKFLOW:
+  ───────────────────────────────────────────────────────────────────────────
+  make full                  Complete workflow (setup + run + dashboard)
+  make master                Alias for 'full'
+  make setup                 Setup environment
+  make run                   Run pipeline
+  make dashboard             Launch dashboard
+  
+  INSTALLATION:
+  ───────────────────────────────────────────────────────────────────────────
+  make install               Install dependencies
+  make install-dev           Install dev dependencies
+  make test-install          Test installation
+  
+  UTILITIES:
+  ───────────────────────────────────────────────────────────────────────────
+  make test                  Run tests
+  make clean                 Clean cache
+  make lint                  Run linters
+  make format                Format code
+  make example               Run examples
+  make help                  Show help
+  make info                  Show project structure
+  make docs                  Show documentation
+
+═══════════════════════════════════════════════════════════════════════════════
+  ⏱️  EXECUTION TIMES
+═══════════════════════════════════════════════════════════════════════════════
+
+  ./run.sh setup             ~30 seconds   (first time)
+  ./run.sh run               ~1-2 minutes  (pipeline)
+  ./run.sh dashboard         ~5-10 sec     (startup)
+  ./run.sh full              ~2-3 minutes  (complete workflow)
+
+═══════════════════════════════════════════════════════════════════════════════
+  📊 WORKFLOW EXAMPLES
+═══════════════════════════════════════════════════════════════════════════════
+
+  FIRST TIME USERS:
+  ─────────────────────────────────────────────────────────────────────────
+  ./run.sh full
+  
+  OR step by step:
+  ./run.sh setup
+  ./run.sh run
+  ./run.sh dashboard
+
+  JUST DATA PROCESSING:
+  ─────────────────────────────────────────────────────────────────────────
+  ./run.sh run
+
+  JUST DASHBOARD:
+  ─────────────────────────────────────────────────────────────────────────
+  ./run.sh dashboard
+
+  DEVELOPMENT:
+  ─────────────────────────────────────────────────────────────────────────
+  make install-dev
+  make format
+  make lint
+  make test
+
+  PRODUCTION:
+  ─────────────────────────────────────────────────────────────────────────
+  ./run.sh setup
+  ./run.sh run
+  # Schedule ./run.sh run as cron job for automated updates
+
+═══════════════════════════════════════════════════════════════════════════════
+  📁 OUTPUT FILES
+═══════════════════════════════════════════════════════════════════════════════
+
+  After running ./run.sh run, you'll get:
+  
+  ├── data/
+  │   ├── raw/
+  │   │   ├── AAPL_raw_*.csv
+  │   │   ├── MSFT_raw_*.csv
+  │   │   └── GOOGL_raw_*.csv
+  │   └── clean/
+  │       ├── AAPL_clean_*.csv
+  │       ├── MSFT_clean_*.csv
+  │       └── GOOGL_clean_*.csv
+  ├── logs/
+  │   └── ohlcv_*.log
+  └── ohlcv_data.db
+
+═══════════════════════════════════════════════════════════════════════════════
+  🎯 CONFIGURATION
+═══════════════════════════════════════════════════════════════════════════════
+
+  Edit src/config.py to customize:
+  
+  DEFAULT_TICKERS = ["AAPL", "MSFT", "GOOGL"]   # Change tickers
+  FETCH_PERIOD = "1y"                           # Change data period
+  OUTLIER_STD_THRESHOLD = 5.0                   # Outlier sensitivity
+  OUTLIER_WINDOW = 30                           # Rolling window size
+
+═══════════════════════════════════════════════════════════════════════════════
+  ✅ VERIFICATION
+═══════════════════════════════════════════════════════════════════════════════
+
+  After ./run.sh full completes:
+  
+  ✓ Check logs:
+    tail -f logs/ohlcv_*.log
+  
+  ✓ Check data:
+    ls -lah data/clean/
+  
+  ✓ Check database:
+    sqlite3 ohlcv_data.db ".tables"
+  
+  ✓ Visit dashboard:
+    http://localhost:8501
+
+═══════════════════════════════════════════════════════════════════════════════
+  🐛 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+  Issue: "Python not found"
+  → brew install python3  (macOS)
+  → python3 --version
+
+  Issue: "Virtual environment fails"
+  → rm -rf .venv
+  → ./run.sh setup
+
+  Issue: "Package import errors"
+  → pip install -q --upgrade pip setuptools
+  → pip install -r requirements.txt
+
+  Issue: "Dashboard won't start"
+  → pip install --upgrade streamlit
+  → streamlit run dashboard/app.py --logger.level=debug
+
+═══════════════════════════════════════════════════════════════════════════════
+  📚 DOCUMENTATION FILES
+═══════════════════════════════════════════════════════════════════════════════
+
+  README.md              - Complete project documentation
+  QUICKSTART.md          - 5-minute setup guide
+  MASTER_COMMANDS.md     - This detailed guide
+  PROJECT_POLISH.md      - Polish improvements summary
+  DEPLOYMENT.md          - Production deployment
+  ARCHITECTURE.py        - System architecture
+
+═══════════════════════════════════════════════════════════════════════════════
+  💡 PRO TIPS
+═══════════════════════════════════════════════════════════════════════════════
+
+  1. Run on schedule:
+     crontab -e
+     0 8 * * * cd /path/to/OHLCV && ./run.sh run
+
+  2. Monitor background execution:
+     ./run.sh run > /tmp/ohlcv.log 2>&1 &
+     tail -f /tmp/ohlcv.log
+
+  3. Custom tickers:
+     Edit src/config.py, then ./run.sh run
+
+  4. Development mode:
+     source .venv/bin/activate
+     python main.py
+
+═══════════════════════════════════════════════════════════════════════════════
+
+For more information, see MASTER_COMMANDS.md
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║  Ready to get started? Run: ./run.sh full                                 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+EOF
