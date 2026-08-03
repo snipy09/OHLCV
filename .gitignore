@@ -7,3 +7,4 @@ data/raw/*.csv
 data/clean/*.csv
 logs/*.log
 *.db
+.vercel
