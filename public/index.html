@@ -1,123 +1,101 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MarketGuard | OHLCV Anomaly & Data Quality Engine</title>
+    <title>MarketGuard | OHLCV Anomaly & Data Pipeline</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#0a0e17',
-                        cardbg: '#111827',
-                        bordercolor: '#1f2937'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f8fafc; color: #0f172a; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
     </style>
 </head>
-<body class="bg-darkbg text-slate-100 min-h-screen">
-    <!-- Header -->
-    <header class="border-b border-gray-800 glass-panel sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <!-- Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="p-2 bg-emerald-600/20 rounded-xl border border-emerald-500/30 text-emerald-400">
-                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                <div class="w-8 h-8 bg-slate-900 text-white rounded flex items-center justify-center font-bold text-xs">
+                    MG
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        MarketGuard <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">FINRA Quality Standard</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Production OHLCV Data Validation, Isolation Forest ML & Microstructure Anomaly Engine</p>
+                <div class="flex items-center space-x-2">
+                    <span class="font-semibold text-sm text-slate-900">MarketGuard</span>
+                    <span class="text-xs text-slate-400">|</span>
+                    <span class="text-xs font-medium text-slate-500">OHLCV Pipeline & Anomaly Engine</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <span class="inline-flex items-center text-xs font-mono text-emerald-400 bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-800/40">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-2"></span> Roll Spread Estimator Active
+                <span class="inline-flex items-center text-xs font-mono text-slate-700 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
+                    FINRA Data Quality Standard
                 </span>
-                <a href="https://github.com/snipy09/OHLCV" target="_blank" class="text-slate-400 hover:text-white text-sm flex items-center gap-1.5 transition">
-                    <i class="fab fa-github text-lg"></i> GitHub
+                <a href="https://github.com/snipy09/OHLCV" target="_blank" class="text-xs text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1">
+                    <i class="fab fa-github"></i> Repository
                 </a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <!-- Controls -->
-        <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- Controls Panel -->
+        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 w-full md:w-auto">
-                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 whitespace-nowrap">Ticker Symbol</label>
-                <input type="text" id="tickerInput" value="AAPL" class="w-36 bg-slate-950 border border-slate-700/80 rounded-xl px-4 py-2 text-slate-100 font-mono text-sm uppercase focus:outline-none focus:border-emerald-500">
-                <button onclick="fetchValidation()" id="analyzeBtn" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition cursor-pointer">
-                    <i class="fa-solid fa-magnifying-glass"></i> Inspect Ticker
+                <label class="text-xs font-semibold text-slate-700 uppercase tracking-wide whitespace-nowrap">Asset Symbol</label>
+                <input type="text" id="tickerInput" value="AAPL" class="w-32 bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono uppercase focus:outline-none focus:border-slate-800">
+                <button onclick="fetchValidation()" id="analyzeBtn" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded shadow-sm flex items-center gap-2 transition cursor-pointer">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i> Inspect Data
                 </button>
             </div>
-            <div class="flex items-center gap-2 text-xs text-slate-400">
-                <span class="font-medium text-slate-300">Quick Tickers:</span>
-                <button onclick="setTicker('AAPL')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">AAPL</button>
-                <button onclick="setTicker('NVDA')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">NVDA</button>
-                <button onclick="setTicker('TSLA')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">TSLA</button>
-                <button onclick="setTicker('BTC-USD')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">BTC-USD</button>
-                <button onclick="setTicker('EURUSD=X')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-mono transition">FX EUR/USD</button>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="font-medium text-slate-500">Quick Tickers:</span>
+                <button onclick="setTicker('AAPL')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">AAPL</button>
+                <button onclick="setTicker('NVDA')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">NVDA</button>
+                <button onclick="setTicker('TSLA')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">TSLA</button>
+                <button onclick="setTicker('BTC-USD')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">BTC-USD</button>
+                <button onclick="setTicker('EURUSD=X')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">EUR/USD</button>
             </div>
         </div>
 
         <!-- Metric KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-emerald-500">
-                <p class="text-xs text-slate-400 font-medium">Data Quality Score</p>
-                <h3 class="text-2xl font-bold text-emerald-400 mt-1 font-mono" id="kpiScore">-- / 100</h3>
-                <p class="text-xs text-slate-400 mt-1" id="kpiRating">Rating: EXCELLENT</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Quality Health Score</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiScore">-- / 100</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block" id="kpiRating">Rating: EXCELLENT</span>
             </div>
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-amber-500">
-                <p class="text-xs text-slate-400 font-medium">Anomalies Detected</p>
-                <h3 class="text-2xl font-bold text-amber-400 mt-1 font-mono" id="kpiAnomalies">--</h3>
-                <p class="text-xs text-slate-400 mt-1" id="kpiAnomalyPct">Contamination: --%</p>
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Anomalies Detected</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiAnomalies">--</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block" id="kpiAnomalyPct">Contamination: --%</span>
             </div>
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-indigo-500">
-                <p class="text-xs text-slate-400 font-medium">Roll Spread Estimate</p>
-                <h3 class="text-2xl font-bold text-indigo-400 mt-1 font-mono" id="kpiRollSpread">--</h3>
-                <p class="text-xs text-slate-400 mt-1">Market Microstructure Bid-Ask Shock</p>
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Roll Spread Estimate</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiRollSpread">--</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block">Microstructure Bid-Ask Shock</span>
             </div>
-            <div class="glass-panel p-5 rounded-2xl border-l-4 border-purple-500">
-                <p class="text-xs text-slate-400 font-medium">Data Points Verified</p>
-                <h3 class="text-2xl font-bold text-purple-400 mt-1 font-mono" id="kpiRows">--</h3>
-                <p class="text-xs text-slate-400 mt-1">100% Structural Consistency</p>
+            <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Data Points Verified</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiRows">--</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block">100% Structural Consistency</span>
             </div>
         </div>
 
         <!-- Candlestick + Anomaly Chart -->
-        <div class="glass-panel p-6 rounded-2xl">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-chart-candlestick text-emerald-400"></i> OHLCV Market Terminal with Bollinger Bands & Anomaly Flagging
-                    </h2>
-                    <p class="text-xs text-slate-400">Red markers indicate Isolation Forest ML & MAD return outliers</p>
-                </div>
+        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-sm font-semibold text-slate-900">OHLCV Market Candlestick & Isolation Forest Anomaly Markers</h2>
+                <span class="text-xs text-slate-500 font-mono">Red 'x' indicates detected anomaly</span>
             </div>
-            <div id="chartContainer" class="w-full h-[550px]"></div>
+            <div id="chartContainer" class="w-full h-[520px]"></div>
         </div>
     </main>
 
-    <footer class="border-t border-gray-800 py-6 text-center text-xs text-slate-500">
-        <p>MarketGuard OHLCV Pipeline • Built for Financial Data Engineering & Automated Trading Systems</p>
+    <footer class="border-t border-slate-200 bg-white py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            MarketGuard Data Pipeline • Built with Python, Isolation Forest ML & Plotly
+        </div>
     </footer>
 
     <script>
@@ -129,7 +107,7 @@
         async function fetchValidation() {
             const btn = document.getElementById('analyzeBtn');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Inspecting...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-xs"></i> Inspecting...`;
 
             const ticker = document.getElementById('tickerInput').value.trim();
 
@@ -148,12 +126,11 @@
                 alert('Connection error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> Inspect Ticker`;
+                btn.innerHTML = `<i class="fa-solid fa-magnifying-glass text-xs"></i> Inspect Data`;
             }
         }
 
         function renderChart(data) {
-            // Update KPIs
             document.getElementById('kpiScore').innerText = data.quality_score.toFixed(1) + ' / 100';
             document.getElementById('kpiRating').innerText = 'Rating: ' + (data.quality_score >= 95 ? 'EXCELLENT' : 'GOOD');
 
@@ -161,7 +138,7 @@
             document.getElementById('kpiAnomalies').innerText = outlierReport.total_outliers || 0;
             document.getElementById('kpiAnomalyPct').innerText = 'Contamination: ' + (outlierReport.outlier_percentage || 0).toFixed(2) + '%';
             document.getElementById('kpiRollSpread').innerText = '$' + (outlierReport.roll_bid_ask_spread_est || 0).toFixed(4);
-            document.getElementById('kpiRows').innerText = data.data_points + ' Trading Days';
+            document.getElementById('kpiRows').innerText = data.data_points + ' Days';
 
             const series = data.series;
             const dates = series.map(s => s.date);
@@ -174,7 +151,6 @@
             const lowerBand = series.map(s => s.lower_band);
             const sma20 = series.map(s => s.sma20);
 
-            // Anomaly Points
             const anomalyDates = [];
             const anomalyCloses = [];
             series.forEach(s => {
@@ -184,7 +160,6 @@
                 }
             });
 
-            // Traces
             const candlestickTrace = {
                 x: dates,
                 open: opens,
@@ -192,9 +167,9 @@
                 low: lows,
                 close: closes,
                 type: 'candlestick',
-                name: data.ticker + ' OHLC',
-                increasing: { line: { color: '#10b981' } },
-                decreasing: { line: { color: '#f43f5e' } }
+                name: data.ticker + ' Price',
+                increasing: { line: { color: '#16a34a', width: 1 } },
+                decreasing: { line: { color: '#dc2626', width: 1 } }
             };
 
             const smaTrace = {
@@ -202,8 +177,8 @@
                 y: sma20,
                 type: 'scatter',
                 mode: 'lines',
-                name: '20-Day SMA',
-                line: { color: '#3b82f6', width: 1.5 }
+                name: '20-SMA',
+                line: { color: '#2563eb', width: 1.5 }
             };
 
             const upperBandTrace = {
@@ -211,8 +186,8 @@
                 y: upperBand,
                 type: 'scatter',
                 mode: 'lines',
-                name: 'Bollinger Upper (+2σ)',
-                line: { color: 'rgba(147, 51, 234, 0.5)', width: 1, dash: 'dot' }
+                name: 'Bollinger (+2σ)',
+                line: { color: '#94a3b8', width: 1, dash: 'dot' }
             };
 
             const lowerBandTrace = {
@@ -220,8 +195,8 @@
                 y: lowerBand,
                 type: 'scatter',
                 mode: 'lines',
-                name: 'Bollinger Lower (-2σ)',
-                line: { color: 'rgba(147, 51, 234, 0.5)', width: 1, dash: 'dot' }
+                name: 'Bollinger (-2σ)',
+                line: { color: '#94a3b8', width: 1, dash: 'dot' }
             };
 
             const anomalyTrace = {
@@ -229,8 +204,8 @@
                 y: anomalyCloses,
                 mode: 'markers',
                 type: 'scatter',
-                name: 'Detected Anomaly',
-                marker: { size: 10, color: '#f43f5e', symbol: 'x' }
+                name: 'Anomaly Flag',
+                marker: { size: 9, color: '#dc2626', symbol: 'x' }
             };
 
             const volumeTrace = {
@@ -239,17 +214,17 @@
                 type: 'bar',
                 name: 'Volume',
                 yaxis: 'y2',
-                marker: { color: 'rgba(100, 116, 139, 0.4)' }
+                marker: { color: '#cbd5e1' }
             };
 
             const layout = {
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)',
-                margin: { l: 50, r: 20, t: 20, b: 50 },
-                xaxis: { color: '#94a3b8', gridcolor: '#1f2937', rangeslider: { visible: false } },
-                yaxis: { title: 'Price ($)', color: '#94a3b8', gridcolor: '#1f2937', domain: [0.3, 1] },
-                yaxis2: { title: 'Volume', color: '#94a3b8', gridcolor: '#1f2937', domain: [0, 0.22] },
-                legend: { font: { color: '#e2e8f0' }, orientation: 'h', y: 1.1 }
+                paper_bgcolor: '#ffffff',
+                plot_bgcolor: '#ffffff',
+                margin: { l: 45, r: 15, t: 15, b: 45 },
+                xaxis: { color: '#475569', gridcolor: '#f1f5f9', rangeslider: { visible: false } },
+                yaxis: { title: 'Price ($)', color: '#475569', gridcolor: '#f1f5f9', domain: [0.3, 1] },
+                yaxis2: { title: 'Volume', color: '#475569', gridcolor: '#f1f5f9', domain: [0, 0.2] },
+                legend: { font: { color: '#334155', size: 11 }, orientation: 'h', y: 1.08 }
             };
 
             Plotly.newPlot('chartContainer', [candlestickTrace, smaTrace, upperBandTrace, lowerBandTrace, anomalyTrace, volumeTrace], layout);
