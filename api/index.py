@@ -8,6 +8,7 @@ import numpy as np
 import yfinance as yf
 from datetime import datetime, timedelta
 from typing import Any, Dict
+import math
 
 import sys
 import os
@@ -28,11 +29,12 @@ def sanitize_json(obj: Any) -> Any:
         return [sanitize_json(v) for v in obj]
     elif isinstance(obj, np.ndarray):
         return [sanitize_json(v) for v in obj.tolist()]
-    elif isinstance(obj, (np.float32, np.float64, np.floating)):
-        return float(obj)
-    elif isinstance(obj, (np.int32, np.int64, np.integer)):
+    elif isinstance(obj, (float, np.float32, np.float64, np.floating)):
+        val = float(obj)
+        return None if math.isnan(val) or math.isinf(val) else val
+    elif isinstance(obj, (int, np.int32, np.int64, np.integer)):
         return int(obj)
-    elif isinstance(obj, (np.bool_)):
+    elif isinstance(obj, (bool, np.bool_)):
         return bool(obj)
     else:
         return obj
@@ -40,20 +42,20 @@ def sanitize_json(obj: Any) -> Any:
 def calculate_technical_indicators(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     # 20-day SMA & Bollinger Bands
-    df['sma20'] = df['close'].rolling(20).mean()
-    df['std20'] = df['close'].rolling(20).std()
+    df['sma20'] = df['close'].rolling(20, min_periods=1).mean()
+    df['std20'] = df['close'].rolling(20, min_periods=1).std().fillna(0)
     df['upper_band'] = df['sma20'] + (2 * df['std20'])
     df['lower_band'] = df['sma20'] - (2 * df['std20'])
     
     # 50-day SMA
-    df['sma50'] = df['close'].rolling(50).mean()
+    df['sma50'] = df['close'].rolling(50, min_periods=1).mean()
     
     # RSI (14)
     delta = df['close'].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(14).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+    gain = (delta.where(delta > 0, 0)).rolling(14, min_periods=1).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(14, min_periods=1).mean()
     rs = gain / (loss + 1e-8)
-    df['rsi'] = 100 - (100 / (1 + rs))
+    df['rsi'] = (100 - (100 / (1 + rs))).fillna(50)
     
     return df
 
