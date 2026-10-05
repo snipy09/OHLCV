@@ -40,46 +40,49 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <!-- Controls Panel -->
-        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <label class="text-xs font-semibold text-slate-700 uppercase tracking-wide whitespace-nowrap">Asset Symbol</label>
-                <input type="text" id="tickerInput" value="AAPL" class="w-32 bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono uppercase focus:outline-none focus:border-slate-800">
-                <button onclick="fetchValidation()" id="analyzeBtn" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded shadow-sm flex items-center gap-2 transition cursor-pointer">
-                    <i class="fa-solid fa-magnifying-glass text-xs"></i> Inspect Data
-                </button>
-            </div>
-            <div class="flex items-center gap-2 text-xs">
-                <span class="font-medium text-slate-500">Quick Tickers:</span>
-                <button onclick="setTicker('AAPL')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">AAPL</button>
-                <button onclick="setTicker('NVDA')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">NVDA</button>
-                <button onclick="setTicker('TSLA')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">TSLA</button>
-                <button onclick="setTicker('BTC-USD')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">BTC-USD</button>
-                <button onclick="setTicker('EURUSD=X')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">EUR/USD</button>
-            </div>
-        </div>
-
-        <!-- Empirical Model Accuracy & Anomaly Audit Telemetry Banner -->
-        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-bullseye text-slate-700"></i> Empirical Anomaly Model Accuracy Audit
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Synthetic Data Perturbation Confusion Matrix & ROC-AUC Validation</p>
+        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <div class="md:col-span-4">
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Asset Symbol</label>
+                    <input type="text" id="tickerInput" value="AAPL" class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono uppercase focus:outline-none focus:border-slate-800">
                 </div>
-                <div class="flex items-center gap-6 font-mono text-xs">
-                    <div>
-                        <span class="text-slate-500 block text-[10px] uppercase">ROC-AUC Capacity</span>
-                        <span class="font-semibold text-slate-900">80.40% High Capacity</span>
-                    </div>
-                    <div class="border-l border-slate-200 pl-6">
-                        <span class="text-slate-500 block text-[10px] uppercase">Anomaly Recall</span>
-                        <span class="font-semibold text-emerald-700">66.67% Captured</span>
-                    </div>
-                    <div class="border-l border-slate-200 pl-6">
-                        <span class="text-slate-500 block text-[10px] uppercase">Detection Precision</span>
-                        <span class="font-semibold text-slate-900">36.36%</span>
-                    </div>
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Time Horizon</label>
+                    <select id="daysSelect" class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono focus:outline-none focus:border-slate-800">
+                        <option value="90">3 Months</option>
+                        <option value="180">6 Months</option>
+                        <option value="365" selected>1 Year</option>
+                        <option value="730">2 Years</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Sanitization Mode</label>
+                    <select id="sanitizeSelect" class="w-full bg-white border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-mono focus:outline-none focus:border-slate-800">
+                        <option value="strict" selected>Strict Statistical Envelope</option>
+                        <option value="lenient">Lenient Winsorization</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <button onclick="fetchValidation()" id="analyzeBtn" class="w-full px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded shadow-sm flex items-center justify-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i> Inspect
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Tickers & Export -->
+            <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="font-medium text-slate-500">Quick Symbols:</span>
+                    <button onclick="setTicker('AAPL')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">AAPL</button>
+                    <button onclick="setTicker('NVDA')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">NVDA</button>
+                    <button onclick="setTicker('TSLA')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">TSLA</button>
+                    <button onclick="setTicker('BTC-USD')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">BTC-USD</button>
+                    <button onclick="setTicker('EURUSD=X')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-mono transition">EUR/USD</button>
+                </div>
+                <div>
+                    <button onclick="exportCleanData()" id="exportBtn" class="text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-download text-xs"></i> Export Clean OHLCV (CSV)
+                    </button>
                 </div>
             </div>
         </div>
@@ -99,32 +102,82 @@
             <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
                 <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Roll Spread Estimate</span>
                 <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiRollSpread">--</div>
-                <span class="text-xs text-slate-500 font-mono mt-1 block">Microstructure Bid-Ask Shock</span>
+                <span class="text-xs text-slate-500 font-mono mt-1 block">Effective Microstructure Spread</span>
             </div>
             <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Data Points Verified</span>
-                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiRows">--</div>
-                <span class="text-xs text-slate-500 font-mono mt-1 block">100% Structural Consistency</span>
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Amihud Illiquidity</span>
+                <div class="text-2xl font-bold text-slate-900 font-mono mt-1" id="kpiAmihud">--</div>
+                <span class="text-xs text-slate-500 font-mono mt-1 block">Price Impact Ratio (x10⁻⁶)</span>
             </div>
         </div>
 
-        <!-- Candlestick + Anomaly Chart -->
-        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-sm font-semibold text-slate-900">OHLCV Market Candlestick & Isolation Forest Anomaly Markers</h2>
-                <span class="text-xs text-slate-500 font-mono">Red 'x' indicates detected anomaly</span>
+        <!-- Charts Layout -->
+        <div class="space-y-6">
+            <!-- Chart 1: Price & Bollinger Bands -->
+            <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-sm font-semibold text-slate-900">Validated Price Action & Bollinger Envelope</h2>
+                    <span class="text-xs text-slate-500 font-mono">20-Day ±2σ Bands</span>
+                </div>
+                <div id="chartPrice" class="w-full h-[320px]"></div>
             </div>
-            <div id="chartContainer" class="w-full h-[520px]"></div>
+
+            <!-- Chart 2: Volume & Microstructure Anomalies -->
+            <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-sm font-semibold text-slate-900">Trading Volume & Anomaly Detection Flags</h2>
+                    <span class="text-xs text-slate-500 font-mono">Volume Z-Score Envelope</span>
+                </div>
+                <div id="chartVolume" class="w-full h-[220px]"></div>
+            </div>
+
+            <!-- Chart 3: MACD & Momentum -->
+            <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-sm font-semibold text-slate-900">MACD (12, 26, 9) & Momentum Convergence</h2>
+                    <span class="text-xs text-slate-500 font-mono">Signal Line & Histogram</span>
+                </div>
+                <div id="chartMACD" class="w-full h-[220px]"></div>
+            </div>
+        </div>
+
+        <!-- Anomaly Audit Trail Table -->
+        <div class="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-xs font-semibold text-slate-900 uppercase tracking-wider">Automated Anomaly Audit Trail</h3>
+                <span class="text-xs font-mono text-slate-500" id="auditCountLabel">0 Flagged Events</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-50 text-slate-600 font-mono uppercase text-[11px] border-b border-slate-200">
+                        <tr>
+                            <th class="p-3">Timestamp</th>
+                            <th class="p-3">Anomaly Type</th>
+                            <th class="p-3">Closing Price</th>
+                            <th class="p-3">Volume</th>
+                            <th class="p-3">Volume Z-Score</th>
+                            <th class="p-3">Pipeline Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 font-mono text-slate-800" id="auditTableBody">
+                        <tr>
+                            <td colspan="6" class="p-4 text-center text-slate-400 font-normal">No anomalies detected in the selected window.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
     <footer class="border-t border-slate-200 bg-white py-4 mt-8">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-            MarketGuard Data Pipeline • Built with Python, Isolation Forest ML & Plotly
+            MarketGuard Quantitative System • Built with Python, Pandas, SciPy & High-Frequency Anomaly Filters
         </div>
     </footer>
 
     <script>
+        let currentData = null;
+
         function setTicker(t) {
             document.getElementById('tickerInput').value = t;
             fetchValidation();
@@ -136,9 +189,10 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-xs"></i> Inspecting...`;
 
             const ticker = document.getElementById('tickerInput').value.trim();
+            const days = document.getElementById('daysSelect').value;
 
             try {
-                const res = await fetch(`/api/validate?ticker=${ticker}`);
+                const res = await fetch(`/api/validate?ticker=${ticker}&days=${days}`);
                 const data = await res.json();
 
                 if (!res.ok || data.error) {
@@ -146,117 +200,170 @@
                     return;
                 }
 
-                renderChart(data);
+                currentData = data;
+                renderDashboard(data);
             } catch (err) {
                 console.error(err);
                 alert('Connection error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-magnifying-glass text-xs"></i> Inspect Data`;
+                btn.innerHTML = `<i class="fa-solid fa-magnifying-glass text-xs"></i> Inspect`;
             }
         }
 
-        function renderChart(data) {
+        function renderDashboard(data) {
+            // KPI metrics
             document.getElementById('kpiScore').innerText = data.quality_score.toFixed(1) + ' / 100';
-            document.getElementById('kpiRating').innerText = 'Rating: ' + (data.quality_score >= 95 ? 'EXCELLENT' : 'GOOD');
+            
+            const metrics = data.metrics || {};
+            document.getElementById('kpiAnomalies').innerText = metrics.total_anomalies || 0;
+            document.getElementById('kpiAnomalyPct').innerText = 'Contamination: ' + (metrics.contamination_rate || 0).toFixed(2) + '%';
+            document.getElementById('kpiRollSpread').innerText = '$' + (metrics.avg_roll_spread || 0).toFixed(3);
+            document.getElementById('kpiAmihud').innerText = (metrics.avg_amihud_illiquidity || 0).toFixed(4);
 
-            const outlierReport = data.outlier_report || {};
-            document.getElementById('kpiAnomalies').innerText = outlierReport.total_outliers || 0;
-            document.getElementById('kpiAnomalyPct').innerText = 'Contamination: ' + (outlierReport.outlier_percentage || 0).toFixed(2) + '%';
-            document.getElementById('kpiRollSpread').innerText = '$' + (outlierReport.roll_bid_ask_spread_est || 0).toFixed(4);
-            document.getElementById('kpiRows').innerText = data.data_points + ' Days';
-
-            const series = data.series;
+            const series = data.series || [];
             const dates = series.map(s => s.date);
-            const opens = series.map(s => s.open);
-            const highs = series.map(s => s.high);
-            const lows = series.map(s => s.low);
             const closes = series.map(s => s.close);
-            const volumes = series.map(s => s.volume);
-            const upperBand = series.map(s => s.upper_band);
-            const lowerBand = series.map(s => s.lower_band);
-            const sma20 = series.map(s => s.sma20);
 
-            const anomalyDates = [];
-            const anomalyCloses = [];
-            series.forEach(s => {
-                if (s.is_outlier) {
-                    anomalyDates.push(s.date);
-                    anomalyCloses.push(s.close);
+            // Chart 1: Price + Bollinger
+            Plotly.newPlot('chartPrice', [
+                {
+                    x: dates,
+                    y: series.map(s => s.upper_band),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#cbd5e1', width: 1 },
+                    name: 'Upper Band (+2σ)'
+                },
+                {
+                    x: dates,
+                    y: series.map(s => s.lower_band),
+                    type: 'scatter',
+                    mode: 'lines',
+                    fill: 'tonexty',
+                    fillcolor: 'rgba(241, 245, 249, 0.4)',
+                    line: { color: '#cbd5e1', width: 1 },
+                    name: 'Lower Band (-2σ)'
+                },
+                {
+                    x: dates,
+                    y: closes,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#0f172a', width: 1.5 },
+                    name: data.ticker
                 }
-            });
+            ], {
+                margin: { t: 10, r: 20, l: 40, b: 30 },
+                xaxis: { gridcolor: '#f1f5f9' },
+                yaxis: { gridcolor: '#f1f5f9' },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                legend: { orientation: 'h', y: 1.15 }
+            }, { responsive: true, displayModeBar: false });
 
-            const candlestickTrace = {
+            // Chart 2: Volume
+            const colors = series.map(s => s.is_anomaly ? '#e11d48' : '#94a3b8');
+            Plotly.newPlot('chartVolume', [{
                 x: dates,
-                open: opens,
-                high: highs,
-                low: lows,
-                close: closes,
-                type: 'candlestick',
-                name: data.ticker + ' Price',
-                increasing: { line: { color: '#16a34a', width: 1 } },
-                decreasing: { line: { color: '#dc2626', width: 1 } }
-            };
-
-            const smaTrace = {
-                x: dates,
-                y: sma20,
-                type: 'scatter',
-                mode: 'lines',
-                name: '20-SMA',
-                line: { color: '#2563eb', width: 1.5 }
-            };
-
-            const upperBandTrace = {
-                x: dates,
-                y: upperBand,
-                type: 'scatter',
-                mode: 'lines',
-                name: 'Bollinger (+2σ)',
-                line: { color: '#94a3b8', width: 1, dash: 'dot' }
-            };
-
-            const lowerBandTrace = {
-                x: dates,
-                y: lowerBand,
-                type: 'scatter',
-                mode: 'lines',
-                name: 'Bollinger (-2σ)',
-                line: { color: '#94a3b8', width: 1, dash: 'dot' }
-            };
-
-            const anomalyTrace = {
-                x: anomalyDates,
-                y: anomalyCloses,
-                mode: 'markers',
-                type: 'scatter',
-                name: 'Anomaly Flag',
-                marker: { size: 9, color: '#dc2626', symbol: 'x' }
-            };
-
-            const volumeTrace = {
-                x: dates,
-                y: volumes,
+                y: series.map(s => s.volume),
                 type: 'bar',
-                name: 'Volume',
-                yaxis: 'y2',
-                marker: { color: '#cbd5e1' }
-            };
+                marker: { color: colors },
+                name: 'Volume'
+            }], {
+                margin: { t: 10, r: 20, l: 40, b: 30 },
+                xaxis: { gridcolor: '#f1f5f9' },
+                yaxis: { gridcolor: '#f1f5f9' },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent'
+            }, { responsive: true, displayModeBar: false });
 
-            const layout = {
-                paper_bgcolor: '#ffffff',
-                plot_bgcolor: '#ffffff',
-                margin: { l: 45, r: 15, t: 15, b: 45 },
-                xaxis: { color: '#475569', gridcolor: '#f1f5f9', rangeslider: { visible: false } },
-                yaxis: { title: 'Price ($)', color: '#475569', gridcolor: '#f1f5f9', domain: [0.3, 1] },
-                yaxis2: { title: 'Volume', color: '#475569', gridcolor: '#f1f5f9', domain: [0, 0.2] },
-                legend: { font: { color: '#334155', size: 11 }, orientation: 'h', y: 1.08 }
-            };
+            // Chart 3: MACD
+            Plotly.newPlot('chartMACD', [
+                {
+                    x: dates,
+                    y: series.map(s => s.macd),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#0284c7', width: 1.5 },
+                    name: 'MACD'
+                },
+                {
+                    x: dates,
+                    y: series.map(s => s.macd_signal),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#f59e0b', width: 1 },
+                    name: 'Signal'
+                },
+                {
+                    x: dates,
+                    y: series.map(s => s.macd_hist),
+                    type: 'bar',
+                    marker: { color: series.map(s => s.macd_hist >= 0 ? '#10b981' : '#f43f5e') },
+                    name: 'Histogram'
+                }
+            ], {
+                margin: { t: 10, r: 20, l: 40, b: 30 },
+                xaxis: { gridcolor: '#f1f5f9' },
+                yaxis: { gridcolor: '#f1f5f9' },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                legend: { orientation: 'h', y: 1.15 }
+            }, { responsive: true, displayModeBar: false });
 
-            Plotly.newPlot('chartContainer', [candlestickTrace, smaTrace, upperBandTrace, lowerBandTrace, anomalyTrace, volumeTrace], layout);
+            // Anomaly Audit Table
+            const auditLog = data.audit_log || [];
+            const tbody = document.getElementById('auditTableBody');
+            document.getElementById('auditCountLabel').innerText = auditLog.length + ' Flagged Events';
+
+            if (auditLog.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 font-normal">No anomalies detected in the selected window.</td></tr>`;
+            } else {
+                tbody.innerHTML = auditLog.slice(0, 10).map(item => `
+                    <tr>
+                        <td class="p-3 font-semibold text-slate-900">${item.date}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded text-[10px]">${item.type}</span></td>
+                        <td class="p-3">$${item.close.toFixed(2)}</td>
+                        <td class="p-3">${item.volume.toLocaleString()}</td>
+                        <td class="p-3 font-semibold ${Math.abs(item.zscore) > 3 ? 'text-rose-600' : 'text-slate-700'}">${item.zscore}σ</td>
+                        <td class="p-3 text-emerald-600 font-semibold">${item.action}</td>
+                    </tr>
+                `).join('');
+            }
         }
 
-        window.addEventListener('DOMContentLoaded', fetchValidation);
+        function exportCleanData() {
+            if (!currentData || !currentData.series) {
+                alert('Run inspection first.');
+                return;
+            }
+            const rows = [['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'SMA20', 'RSI', 'MACD', 'IsAnomaly']];
+            currentData.series.forEach(item => {
+                rows.push([
+                    item.date,
+                    item.open || item.close,
+                    item.high || item.close,
+                    item.low || item.close,
+                    item.close,
+                    item.volume,
+                    item.sma20 ? item.sma20.toFixed(2) : '',
+                    item.rsi ? item.rsi.toFixed(2) : '',
+                    item.macd ? item.macd.toFixed(3) : '',
+                    item.is_anomaly ? 1 : 0
+                ]);
+            });
+            const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `ohlcv_${currentData.ticker}_clean.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = fetchValidation;
     </script>
 </body>
 </html>
